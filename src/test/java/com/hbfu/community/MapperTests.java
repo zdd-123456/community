@@ -1,7 +1,9 @@
 package com.hbfu.community;
 import com.hbfu.community.dao.DiscussPostMapper;
+import com.hbfu.community.dao.LoginTicketMapper;
 import com.hbfu.community.dao.UserMapper;
 import com.hbfu.community.entity.DiscussPost;
+import com.hbfu.community.entity.LoginTicket;
 import com.hbfu.community.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,9 @@ public class MapperTests {
 
     @Autowired
     private DiscussPostMapper discussPostMapper;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     @Test
     public void testSelectUser() {
@@ -73,5 +78,14 @@ public class MapperTests {
         int rows = discussPostMapper.selectDiscussPostRows(102);
         System.out.println(rows);
     }
+    @Test
+    public void testInsertLoginTicket(){
+        LoginTicket loginTicket=new LoginTicket();
+        loginTicket.setUserId(101);
+        loginTicket.setTicket("111");
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+1000*60*10));
+        loginTicketMapper.insertLoginTicket(loginTicket);
 
+    }
 }
