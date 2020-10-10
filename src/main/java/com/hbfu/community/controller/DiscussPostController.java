@@ -1,9 +1,7 @@
 package com.hbfu.community.controller;
 
-import com.hbfu.community.entity.Comment;
-import com.hbfu.community.entity.DiscussPost;
-import com.hbfu.community.entity.Page;
-import com.hbfu.community.entity.User;
+import com.hbfu.community.entity.*;
+import com.hbfu.community.event.EventProducer;
 import com.hbfu.community.service.CommentService;
 import com.hbfu.community.service.DiscussPostService;
 import com.hbfu.community.service.LikeService;
@@ -39,6 +37,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     //添加帖子
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -54,6 +55,11 @@ public class DiscussPostController implements CommunityConstant {
         post.setContent(content);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
+        //触发发帖对象
+        Event event=new Event().setTopic(TOPIC_PUBLISH).setUserId(user.getId()).setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0, "发布成功!");
     }
     //帖子详情
